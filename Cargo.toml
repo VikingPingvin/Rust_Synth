@@ -1,0 +1,11 @@
+[package]
+name = "Synth"
+version = "0.1.0"
+authors = ["VikingPingvin <sch1458@gmail.com>"]
+
+[dependencies]
+cpal ="0.4.0"
+futures ="0.1.13"
+time ="0.1.37"
+notereader = { path = "notereader"}
+notesender = { path = "notesender"}
