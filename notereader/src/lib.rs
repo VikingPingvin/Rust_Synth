@@ -3,9 +3,7 @@
 By: VikingPingvin  ---  sch1458@gmail.com
 */
 
-pub fn testfun(){
-	println!("Called my test Funcion!");
-}
+
 
 pub fn note_to_freq(notestr:&str){		//Read notes from file |||TEST PURPOSES|||
 	let notebytes = notestr.as_bytes();
