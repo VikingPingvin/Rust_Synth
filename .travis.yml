@@ -1,7 +1,6 @@
 language: rust
 
 rust:
-
     - stable
     - nightly  
 
@@ -10,4 +9,5 @@ matrix:
         -rust: nightly
         
 before_install:
+    - sudo apt-get install libasound2-dev --yes
     - sudo apt-get update
