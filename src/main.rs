@@ -1,7 +1,7 @@
 extern crate cpal;
 extern crate futures;
 extern crate time;
-extern crate notereader;
+extern crate notesender;
 
 use futures::stream::Stream;
 use futures::task;
@@ -85,11 +85,12 @@ impl Synthesizer {
 
 
 fn main() {
-    playbeep();
+    playsound();
+    
 }
 
 
-fn playbeep(){
+fn playsound(){
     let endpoint = cpal::get_default_endpoint().expect("Failed to get default endpoint");
     let format = endpoint.get_supported_formats_list().unwrap().next().expect("Failed to get endpoint format");
 
@@ -138,7 +139,8 @@ fn playbeep(){
         Ok(())
     })).execute(executor);
 
-	notereader::note_to_freq("A2");
+	notesender::note_to_freq("A2");
+    //notesender::init_notes();
 
     let freqs = [
         440.0,

@@ -1,5 +1,5 @@
 [root]
-name = "Synth"
+name = "synth"
 version = "0.1.0"
 dependencies = [
  "cpal 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
