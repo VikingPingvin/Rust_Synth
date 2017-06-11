@@ -140,7 +140,7 @@ fn playsound(){
     })).execute(executor);
 
 	notesender::note_to_freq("A2");
-    //notesender::init_notes();
+    notesender::init_notes();
 
     let freqs = [
         440.0,

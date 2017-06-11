@@ -4,7 +4,6 @@ version = "0.1.0"
 dependencies = [
  "cpal 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.1.13 (registry+https://github.com/rust-lang/crates.io-index)",
- "notereader 0.1.0",
  "notesender 0.1.0",
  "time 0.1.37 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -79,10 +78,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "libc"
 version = "0.2.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-
-[[package]]
-name = "notereader"
-version = "0.1.0"
 
 [[package]]
 name = "notesender"
