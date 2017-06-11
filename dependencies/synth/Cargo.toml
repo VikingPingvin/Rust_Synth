@@ -1,0 +1,6 @@
+[package]
+name = "synth"
+version = "0.1.0"
+authors = ["VikingPingvin <sch1458@gmail.com>", "Artúr Kovács <kovacs.artur.barnabas@gmail.com>"]
+
+[dependencies]

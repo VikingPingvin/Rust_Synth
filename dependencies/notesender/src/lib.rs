@@ -12,7 +12,7 @@ pub fn init_notes(){
     let a = 440.0;
     for x in 0..127{
         notes[x] = (a/32.0)*2f64.powf((x as f64-9.0)/12.0);
-        println!("Midi note {} is : {}",x,notes[x]);
+        // println!("Midi note {} is : {}",x,notes[x]);
     }
 }
 

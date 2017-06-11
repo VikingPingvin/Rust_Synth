@@ -2,6 +2,7 @@ extern crate cpal;
 extern crate futures;
 extern crate time;
 extern crate notesender;
+extern crate synth;
 
 use futures::stream::Stream;
 use futures::task;
@@ -22,68 +23,6 @@ impl Executor for MyExecutor {
     }
 }
 
-
-/// Iterator for iterating over Synthesizer samples.
-///
-/// It is possible to request a SampleIter from a Synthesizer instance.
-/// This SampleIter instance will hold a mutable reference to the Synthesizer
-/// and in each iteration get the next sample.
-///
-/// Please note that while a SampleIter exists for a Synthesizer, the state
-/// of that synthesizer can not be chaned.
-struct SampleIter<'a> {
-    synth: &'a mut Synthesizer
-}
-
-impl<'a> Iterator for SampleIter<'a> {
-    type Item = f32;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        return Some(self.synth.next_sampe())
-    }
-}
-
-
-/// The Synthesizer itself.
-///
-/// Holds all the necessary data to generate the sound samples from the playing notes.
-struct Synthesizer {
-    sample_rate: u32,
-    channel_count: u8,
-    curr_freq: f64,
-    curr_sample: u64,
-    volume: f32
-}
-
-impl Synthesizer {
-    fn new() -> Synthesizer {
-        return Synthesizer {sample_rate: 44100, channel_count: 2, curr_freq: 440.0, curr_sample: 0, volume: 0.1}
-    }
-
-    /// Gets an iterator that gives the next sample in each iteration.
-    /// (each iteration calls next_sample)
-    fn samples_iter(&mut self) -> SampleIter {
-        return SampleIter {synth: self}
-    }
-
-    /// Gets the next sample in the audio signal.
-    ///
-    /// This function will return a value in range [-1, 1] denoting the required
-    /// position of the membrane in order to play the sound. The corresponding time point is
-    /// calculated from the sample rate of the synthesizer.
-    ///
-    /// Each call will step the synthesizer to the following sample so that consecutive calls
-    /// return consecutive samples.
-    fn next_sampe(&mut self) -> f32 {
-        use std::f64::consts::PI;
-        let curr_sec = self.curr_sample as f64 / self.sample_rate as f64;
-        self.curr_sample += 1;
-        return self.volume * (PI * 2.0 * curr_sec * self.curr_freq).sin() as f32;
-    }
-}
-
-
-
 fn main() {
     playsound();
     
@@ -102,7 +41,7 @@ fn playsound(){
 
     let (mut voice, stream) = cpal::Voice::new(&endpoint, &format, &event_loop).expect("Failed to create a voice");
 
-    let synth_arc_mtx = Arc::new(Mutex::new(Synthesizer::new()));
+    let synth_arc_mtx = Arc::new(Mutex::new(synth::Synthesizer::new()));
     {
         let mut synth = synth_arc_mtx.lock().unwrap();
         synth.sample_rate = format.samples_rate.0;
@@ -142,34 +81,79 @@ fn playsound(){
 	notesender::note_to_freq("A2");
     notesender::init_notes();
 
-    let freqs = [
-        440.0,
-        466.1637615180899,
-        493.8833012561241,
-        523.2511306011972,
-        554.3652619537442,
-        587.3295358348151,
-        622.2539674441618,
-        659.2551138257398,
-        698.4564628660078,
-        739.9888454232688,
-        783.9908719634985,
-        830.6093951598903,
-    ];
-    let mut curr_freq_id = 0;
-
+    voice.play();
     // creating a new reference counted reference to synth
     let control_thread_synth = synth_arc_mtx.clone();
     thread::spawn(move || {
         loop {
             {
                 let mut synth = control_thread_synth.lock().unwrap();
-                synth.curr_freq = freqs[curr_freq_id];
+                synth.play_note(synth::C4);
             }
-            voice.play();
-            curr_freq_id = (curr_freq_id+1) % freqs.len();
-            if curr_freq_id == 0 {
-                voice.pause();
+            thread::sleep(Duration::from_millis(250));
+            {
+                let mut synth = control_thread_synth.lock().unwrap();
+                synth.stop_note(synth::C4);
+            }
+            thread::sleep(Duration::from_millis(250));
+
+            {
+                let mut synth = control_thread_synth.lock().unwrap();
+                synth.play_note(synth::E4);
+            }
+            thread::sleep(Duration::from_millis(250));
+            {
+                let mut synth = control_thread_synth.lock().unwrap();
+                synth.stop_note(synth::E4);
+            }
+            thread::sleep(Duration::from_millis(250));
+
+            //------------------------
+
+            {
+                let mut synth = control_thread_synth.lock().unwrap();
+                synth.play_note(synth::C4);
+            }
+            thread::sleep(Duration::from_millis(250));
+            {
+                let mut synth = control_thread_synth.lock().unwrap();
+                synth.stop_note(synth::C4);
+            }
+            thread::sleep(Duration::from_millis(250));
+
+            {
+                let mut synth = control_thread_synth.lock().unwrap();
+                synth.play_note(synth::E4);
+            }
+            thread::sleep(Duration::from_millis(250));
+            {
+                let mut synth = control_thread_synth.lock().unwrap();
+                synth.stop_note(synth::E4);
+            }
+            thread::sleep(Duration::from_millis(250));
+
+
+            // =============================================
+
+            {
+                let mut synth = control_thread_synth.lock().unwrap();
+                synth.play_note(synth::G4);
+            }
+            thread::sleep(Duration::from_millis(500));
+            {
+                let mut synth = control_thread_synth.lock().unwrap();
+                synth.stop_note(synth::G4);
+            }
+            thread::sleep(Duration::from_millis(500));
+
+            {
+                let mut synth = control_thread_synth.lock().unwrap();
+                synth.play_note(synth::G4);
+            }
+            thread::sleep(Duration::from_millis(500));
+            {
+                let mut synth = control_thread_synth.lock().unwrap();
+                synth.stop_note(synth::G4);
             }
             thread::sleep(Duration::from_millis(500));
         }
