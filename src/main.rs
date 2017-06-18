@@ -78,24 +78,28 @@ fn playsound(){
         Ok(())
     })).execute(executor);
 
-	notesender::note_to_freq("A2");
-    notesender::init_notes();
 
     voice.play();
     // creating a new reference counted reference to synth
     let control_thread_synth = synth_arc_mtx.clone();
     thread::spawn(move || {
         loop {
+            
             {
                 let mut synth = control_thread_synth.lock().unwrap();
-                synth.play_note(synth::C4);
+                synth.play_note(synth::midi(60));
+                synth.play_note(synth::midi(64));
             }
+            
             thread::sleep(Duration::from_millis(250));
+            
             {
                 let mut synth = control_thread_synth.lock().unwrap();
-                synth.stop_note(synth::C4);
+                synth.stop_note(synth::midi(60));
+                synth.stop_note(synth::midi(64));
             }
             thread::sleep(Duration::from_millis(250));
+            
 
             {
                 let mut synth = control_thread_synth.lock().unwrap();
@@ -156,6 +160,7 @@ fn playsound(){
                 synth.stop_note(synth::G4);
             }
             thread::sleep(Duration::from_millis(500));
+            
         }
     });
 

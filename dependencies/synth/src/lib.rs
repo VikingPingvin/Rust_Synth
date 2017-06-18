@@ -26,11 +26,16 @@ pub struct Note {
     midi_id: u8 // represents a node by its midi note number
 }
 
+pub fn midi(id:u8) -> Note {
+    return Note{midi_id:id}
+}
+
 pub const C4: Note = Note {midi_id: 60};
 pub const E4: Note = Note {midi_id: 64};
 pub const G4: Note = Note {midi_id: 67};
 
 enum NoteEnvelope {
+    //TODO: Add Decay (ADSR = Attack-Decay-Sustain-Release) ?
     Attack,
     Sustain,
     Release
@@ -75,7 +80,7 @@ impl Synthesizer {
             //curr_freq: 440.0,
             curr_sample: 0,
             volume: 0.1,
-            attack_time: 0.05,
+            attack_time: 0.002,
             release_time: 0.2,
             note_freqs: [0.0; 127],
             active_notes: HashMap::new(),
